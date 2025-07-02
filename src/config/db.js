@@ -1,21 +1,26 @@
-require('dotenv').config();  // ok même si .env local a disparu
-
+require('dotenv').config();
 const { Sequelize } = require('sequelize');
 
-const url = process.env.DATABASE_URL;
+// On priorise DATABASE_URL, sinon on tombe sur MYSQL_PUBLIC_URL
+const url = process.env.DATABASE_URL || process.env.MYSQL_PUBLIC_URL;
 if (!url) {
-  console.error("❌ DATABASE_URL manquant !");
+  console.error("❌ DATABASE_URL et MYSQL_PUBLIC_URL manquantes !");
   process.exit(1);
 }
-console.log(">>> connecting to:", url);
+
+console.log(">>> Using DB URL:", url);
 
 const sequelize = new Sequelize(url, {
   dialect: 'mysql',
   logging: false,
+  dialectOptions: {
+    // Certaines infra Railway / proxies exigent SSL forcé :
+    ssl: { rejectUnauthorized: true }
+  }
 });
 
 sequelize.authenticate()
-  .then(() => console.log("✅ DB connected via DATABASE_URL"))
+  .then(() => console.log("✅ DB connected via URL"))
   .catch(err => {
     console.error("❌ DB connection failed:", err);
     process.exit(1);
