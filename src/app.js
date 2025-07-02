@@ -1,24 +1,24 @@
+// avant tout : charger dotenv si tu veux tester en local
 require('dotenv').config();
-const express = require('express');
-const { Sequelize } = require('sequelize');
-const app = express();
-app.use(express.json());
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASS,
-  {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: 'mysql'
-  }
-);
+const { Sequelize } = require('sequelize');
+
+// → Hardcode temporaire pour ton examen (ou fallback sur env)
+const url = process.env.DATABASE_URL
+          || process.env.MYSQL_PUBLIC_URL
+          || "mysql://root:...@yamabiko.proxy.rw/railway";
+
+console.log(">>> connecting to:", url);
+
+const sequelize = new Sequelize(url, {
+  dialect: 'mysql',
+  logging: false,
+  dialectOptions: { ssl: { rejectUnauthorized: true } }
+});
 
 sequelize.authenticate()
-  .then(() => console.log("DB connected"))
-  .catch(err => console.error("DB error", err));
-
-app.get('/ping', (req, res) => res.send('pong'));
-
-module.exports = app;
+  .then(() => console.log("✅ DB connected via URL"))
+  .catch(err => {
+    console.error("❌ DB connection failed:", err);
+    process.exit(1);
+  });

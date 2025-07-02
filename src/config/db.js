@@ -1,26 +1,21 @@
-require('dotenv').config();
+// src/config/db.js (ou en haut de src/app.js)
 const { Sequelize } = require('sequelize');
 
-// On priorise DATABASE_URL, sinon on tombe sur MYSQL_PUBLIC_URL
-const url = process.env.DATABASE_URL || process.env.MYSQL_PUBLIC_URL;
-if (!url) {
-  console.error("❌ DATABASE_URL et MYSQL_PUBLIC_URL manquantes !");
-  process.exit(1);
-}
+// → Hardcode temporaire pour ton examen :
+const url = "mysql://root:BKaSGLkFHSgbMeDfRuZTWuKhVTQXIUSJ@yamabiko.proxy.rw/railway";
 
-console.log(">>> Using DB URL:", url);
+console.log(">>> USING HARDCODED URL:", url);
 
 const sequelize = new Sequelize(url, {
   dialect: 'mysql',
   logging: false,
   dialectOptions: {
-    // Certaines infra Railway / proxies exigent SSL forcé :
     ssl: { rejectUnauthorized: true }
   }
 });
 
 sequelize.authenticate()
-  .then(() => console.log("✅ DB connected via URL"))
+  .then(() => console.log("✅ DB connected via HARDCODED URL"))
   .catch(err => {
     console.error("❌ DB connection failed:", err);
     process.exit(1);
