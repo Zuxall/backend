@@ -1,19 +1,21 @@
-// avant tout : charger dotenv si tu veux tester en local
 require('dotenv').config();
-
 const { Sequelize } = require('sequelize');
 
-// → Hardcode temporaire pour ton examen (ou fallback sur env)
 const url = process.env.DATABASE_URL
           || process.env.MYSQL_PUBLIC_URL
-          || "mysql://root:...@yamabiko.proxy.rw/railway";
+          || "mysql://root:BKaSGLkFHSgbMeDfRuZTWuKhVTQXIUSJ@yamabiko.proxy.rw/railway";
 
 console.log(">>> connecting to:", url);
 
 const sequelize = new Sequelize(url, {
   dialect: 'mysql',
   logging: false,
-  dialectOptions: { ssl: { rejectUnauthorized: true } }
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
+  }
 });
 
 sequelize.authenticate()
@@ -22,3 +24,5 @@ sequelize.authenticate()
     console.error("❌ DB connection failed:", err);
     process.exit(1);
   });
+
+module.exports = sequelize;

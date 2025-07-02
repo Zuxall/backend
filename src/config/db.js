@@ -1,21 +1,25 @@
-// src/config/db.js (ou en haut de src/app.js)
+require('dotenv').config();
 const { Sequelize } = require('sequelize');
 
-// → Hardcode temporaire pour ton examen :
-const url = "mysql://root:BKaSGLkFHSgbMeDfRuZTWuKhVTQXIUSJ@yamabiko.proxy.rw/railway";
+const url = process.env.DATABASE_URL
+          || process.env.MYSQL_PUBLIC_URL
+          || "mysql://root:BKaSGLkFHSgbMeDfRuZTWuKhVTQXIUSJ@yamabiko.proxy.rw/railway";
 
-console.log(">>> USING HARDCODED URL:", url);
+console.log(">>> connecting to:", url);
 
 const sequelize = new Sequelize(url, {
   dialect: 'mysql',
   logging: false,
   dialectOptions: {
-    ssl: { rejectUnauthorized: true }
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
   }
 });
 
 sequelize.authenticate()
-  .then(() => console.log("✅ DB connected via HARDCODED URL"))
+  .then(() => console.log("✅ DB connected via URL"))
   .catch(err => {
     console.error("❌ DB connection failed:", err);
     process.exit(1);
