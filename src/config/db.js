@@ -1,19 +1,11 @@
-// src/config/db.js
-
+const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
-const { Sequelize } = require('sequelize');
-
-const sequelize = new Sequelize(
-  process.env.DB_NAME,       // ex. 'railway'
-  process.env.DB_USER,       // ex. 'root'
-  process.env.DB_PASS,       // ex. 'vNmaSCbWNRElNwbw…'
-  {
-    host: process.env.DB_HOST,       // → doit être mysql.railway.internal
-    port: process.env.DB_PORT,       // → 3306
-    dialect: 'mysql',
-    logging: false
-  }
-);
+// Utilisation de l'URL unique :
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: 'mysql',
+  dialectOptions: { /* ssl: { rejectUnauthorized: true } si besoin */ },
+  logging: false
+});
 
 module.exports = sequelize;
