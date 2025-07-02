@@ -1,16 +1,17 @@
-// src/config/db.js
-require('dotenv').config();   // ne chargera rien en prod car .env n'existe plus
+require('dotenv').config();  // ok même si .env local a disparu
+
 const { Sequelize } = require('sequelize');
 
 const url = process.env.DATABASE_URL;
 if (!url) {
-  console.error("❌ DATABASE_URL manquant !");
+  console.error("❌ DATABASE_URL manquant !");
   process.exit(1);
 }
+console.log(">>> connecting to:", url);
 
 const sequelize = new Sequelize(url, {
   dialect: 'mysql',
-  logging: false
+  logging: false,
 });
 
 sequelize.authenticate()
