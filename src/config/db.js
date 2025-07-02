@@ -2,19 +2,14 @@
 require('dotenv').config();
 const { Sequelize } = require('sequelize');
 
-// On récupère l'URL complète dans DATABASE_URL
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) {
+const url = process.env.DATABASE_URL;
+if (!url) {
   console.error("❌ DATABASE_URL n'est pas défini !");
   process.exit(1);
 }
 
-const sequelize = new Sequelize(connectionString, {
+const sequelize = new Sequelize(url, {
   dialect: 'mysql',
-  dialectOptions: {
-    // si tu as besoin de SSL (Railway l’active parfois sur PUBLIC_URL)
-    // ssl: { rejectUnauthorized: true }
-  },
   logging: false
 });
 
